@@ -1,16 +1,29 @@
 
-import React from 'react';
+import React, { useContext } from 'react';
 import logo from '../../../assets/logo.svg'
 import { Link } from 'react-router-dom';
+import { AuthContext } from '../../../Provider/AuthProvider';
 
 const NavigationBar = () => {
+    const { user, logOut } = useContext(AuthContext)
     const navItems = <>
         <li><Link to='/' className='font-semibold'>Home</Link></li>
         <li><Link to='/about' className='font-semibold'>About</Link></li>
         <li><Link to='/services' className='font-semibold'>Services</Link></li>
         <li><Link to='/blog' className='font-semibold'>Blog</Link></li>
         <li><Link to='/contact' className='font-semibold'>Contact</Link></li>
+        {
+            user?.email ?
+                <li><Link to="/bookings" className='font-semibold'>My Bookings</Link></li> : ''
+        }
     </>
+    const handleLogout = () => {
+        logOut()
+            .then(() => { })
+            .catch(error => {
+                console.log(error.message)
+            })
+    }
     return (
         <div className="navbar bg-base-100">
             <div className="navbar-start">
@@ -31,7 +44,15 @@ const NavigationBar = () => {
                     {navItems}
                 </ul>
             </div>
-            <div className="navbar-end">
+            <div className="navbar-end flex justify-end items-center">
+                <ul tabIndex={0} className="menu menu-compact p-2 rounded-box">
+                    {
+                        user?.email ?
+                            <li><Link className='font-semibold py-3.5' onClick={handleLogout}>Log Out</Link></li>
+                            :
+                            <li><Link to='/login' className='font-semibold py-3.5'>Login</Link></li>
+                    }
+                </ul>
                 <button className="btn btn-outline btn-primary">Appointment</button>
             </div>
         </div>
